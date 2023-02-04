@@ -120,4 +120,52 @@ export class Random
 	{
 		return this.float(0, Math.PI * 2);
 	}
+
+	/** static access */
+	private static _instance = new Random();
+
+	public static next(): number 
+	{
+		return this._instance.next();
+	}
+
+	public static random(): number 
+	{
+		return this._instance.random();
+	}
+
+	public static float(a?: number, b?: number): number 
+	{
+		return this._instance.float(a, b);
+	}
+
+	public static int(a?: number, b?: number): number 
+	{
+		return this._instance.int(a, b);
+	}
+
+	public static bool(chance: number): boolean 
+	{
+		return this._instance.bool(chance);
+	}
+
+	public static pick<T>(arr: T[]): T 
+	{
+		return this._instance.pick(arr);
+	}
+
+	public static shuffle<T>(arr: T[]): void 
+	{
+		return this._instance.shuffle(arr);
+	}
+
+	public static normalDistribution(mean: number, stdDev: number): number 
+	{
+		return this._instance.normalDistribution(mean, stdDev);
+	}
+
+	public static angle(): number 
+	{
+		return this._instance.angle();
+	}
 }

@@ -5,8 +5,9 @@ import { TileChunk } from "./TileChunk";
 
 const TILE_SIZE = 8;
 const CHUNK_SIZE = 8;
+const RANGE = 2;
 
-export class TileChunkLayer extends Container implements ITickable
+export class TileLayer extends Container implements ITickable
 {
 	private _camera: Camera;
 
@@ -29,14 +30,14 @@ export class TileChunkLayer extends Container implements ITickable
 		this._lastQuadrant = `${col}_${row}`;
 
 		const newQuadrantMap = new Map<string, TileChunk>();
-		for (let iy = row - 2; iy <= row + 2; iy++)
+		for (let iy = row - RANGE; iy <= row + RANGE; iy++)
 		{
 			if (iy < 0) 
 			{
 				continue;
 			}
 		
-			for (let ix = col - 2; ix <= col + 2; ix++)
+			for (let ix = col - RANGE; ix <= col + RANGE; ix++)
 			{
 				const hash = `${ix}_${iy}`
 				if (!this._quadrantMap.get(hash))

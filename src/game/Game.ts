@@ -4,13 +4,13 @@ import gsap from "gsap";
 import log from "loglevel";
 import { Container, Point, Rectangle } from "pixi.js";
 import { Camera } from "./Camera";
+import { CloudLayer } from "./CloudLayer";
 import { Input } from "./Input";
 import { ITickable } from "./ITickable";
 import { Player } from "./Player";
 import { RootVisual } from "./RootVisual";
 import { SeedVisual } from "./SeedVisual";
-import { TileChunk } from "./TileChunk";
-import { TileChunkLayer } from "./TileChunkManager";
+import { TileLayer } from "./TileLayer";
 
 const logger = log.getLogger("Game");
 
@@ -33,7 +33,8 @@ export class Game
 	private _player: Player;
 	private _rootVisual: RootVisual;
 	private _seedVisual: SeedVisual;
-	private _tileChunkLayer: TileChunkLayer;
+	private _tileLayer: TileLayer;
+	private _cloudLayer: CloudLayer;
 
 	private _camera: Camera;
 
@@ -57,9 +58,14 @@ export class Game
 		this._seedVisual = new SeedVisual(this._player);
 
 		this._camera = new Camera(this._world);
-		this._tileChunkLayer = new TileChunkLayer(this._camera);
-		this._world.addChild(this._tileChunkLayer);
-		this._tickables.push(this._tileChunkLayer);
+		
+		this._tileLayer = new TileLayer(this._camera);
+		this._world.addChild(this._tileLayer);
+		this._tickables.push(this._tileLayer);
+	
+		this._cloudLayer = new CloudLayer(this._camera);
+		this._world.addChild(this._cloudLayer);
+		this._tickables.push(this._cloudLayer);
 	}
 
 	public async start(parent: Container): Promise<void>
@@ -72,7 +78,13 @@ export class Game
 			...Array.from({ length: 9 }, (v, i) => 
 			{
 				return [`tiles/T_Tile_0${i}_Alt.png`,`tile_0${i}_alt`]
-			}) as ContentRequest[]
+			}) as ContentRequest[],
+			...Array.from({ length: 7 }, (v, i) => 
+			{
+				return [`misc/T_Misc_Cloud_0${i}.png`,`cloud_0${i}`]
+			}) as ContentRequest[],
+			
+			["sprites/S_Hand_22x24@6.png","hand"]
 		]).complete;
 
 		parent.addChild(this._world);
@@ -80,8 +92,6 @@ export class Game
 		this._input.enable();
 
 		core.services.app.ticker.add(this._onTick, this);
-
-		// this._camera.setTarget(this._player);
 
 		this._tickables.push(this._player);
 		this._tickables.push(this._camera);
@@ -109,7 +119,7 @@ export class Game
 		}, this);
 
 		this._camera.setTarget(this._player);
-		this._player.launch(new Point(this._lastLandPosition.x, -40), new Point(10,-10));
+		this._player.launch(new Point(this._lastLandPosition.x, -10), new Point(10,-10));
 
 		this._tickables.push(this._seedVisual);
 		this._world.addChild(this._seedVisual);

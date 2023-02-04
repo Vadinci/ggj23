@@ -2,7 +2,6 @@ import { Point } from "pixi.js";
 import { Event } from "core/classes/Event";
 import { Input } from "./Input";
 import { ITickable } from "./ITickable";
-import { core } from "core";
 
 const BASE_SPEED = 0.8;
 
@@ -95,6 +94,7 @@ export class Player implements ITickable
 	{
 		if (this._speed > 0) 
 		{
+			this._speed -= 0.1;
 			this._speed -= 0.001;
 		}
 		else 
