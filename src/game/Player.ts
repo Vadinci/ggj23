@@ -73,7 +73,6 @@ export class Player implements ITickable
 
 	private _flyTick(): void
 	{
-		console.log(this._position);
 		if (this._position.y >= 0) 
 		{
 			this._position.y = 0;

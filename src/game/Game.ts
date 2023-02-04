@@ -1,5 +1,6 @@
 import { core } from "core";
 import { ContentRequest } from "core/services/Content";
+import gsap from "gsap";
 import log from "loglevel";
 import { Container, Point, Rectangle } from "pixi.js";
 import { Camera } from "./Camera";
@@ -9,6 +10,7 @@ import { Player } from "./Player";
 import { RootVisual } from "./RootVisual";
 import { SeedVisual } from "./SeedVisual";
 import { TileChunk } from "./TileChunk";
+import { TileChunkLayer } from "./TileChunkManager";
 
 const logger = log.getLogger("Game");
 
@@ -31,12 +33,15 @@ export class Game
 	private _player: Player;
 	private _rootVisual: RootVisual;
 	private _seedVisual: SeedVisual;
+	private _tileChunkLayer: TileChunkLayer;
 
 	private _camera: Camera;
 
 	private _state: GameState = GameState.BOOTUP;
 
 	private _tickables: ITickable[] = [];
+
+	private _lastLandPosition: Point = new Point();
 
 	constructor()
 	{
@@ -52,6 +57,9 @@ export class Game
 		this._seedVisual = new SeedVisual(this._player);
 
 		this._camera = new Camera(this._world);
+		this._tileChunkLayer = new TileChunkLayer(this._camera);
+		this._world.addChild(this._tileChunkLayer);
+		this._tickables.push(this._tileChunkLayer);
 	}
 
 	public async start(parent: Container): Promise<void>
@@ -75,13 +83,6 @@ export class Game
 
 		// this._camera.setTarget(this._player);
 
-		for (let ii =0; ii < 10; ii++)
-		{
-			const chunk = new TileChunk(ii*16);
-			chunk.y = ii * 128;
-			this._world.addChild(chunk);
-		}
-
 		this._tickables.push(this._player);
 		this._tickables.push(this._camera);
 
@@ -103,6 +104,7 @@ export class Game
 	{
 		this._player.onHitGround.once(()=>
 		{
+			this._lastLandPosition.copyFrom(this._player);
 			this._startDigging();
 		}, this);
 
@@ -111,6 +113,8 @@ export class Game
 
 		this._tickables.push(this._seedVisual);
 		this._world.addChild(this._seedVisual);
+
+		this._state = GameState.FLYING;
 	}
 
 	private _startDigging(): void
@@ -119,5 +123,45 @@ export class Game
 
 		this._tickables.push(this._rootVisual);
 		this._world.addChild(this._rootVisual);
+
+		this._player.onStopped.once(()=>
+		{
+			this._panToTree();
+		}, this);
+
+		this._state = GameState.DIGGING;
+	}
+
+	private _panToTree(): void 
+	{
+		// Stop updating the player and root visual
+		this._tickables.splice(this._tickables.indexOf(this._player), 1);
+		this._tickables.splice(this._tickables.indexOf(this._rootVisual), 1);
+
+		// Create a new camera target
+		const newCameraTarget = new Container();
+		newCameraTarget.x = this._camera.x;
+		newCameraTarget.y = this._camera.y;
+		this._world.addChild(newCameraTarget);
+		this._camera.setTarget(newCameraTarget);
+
+		// Animate the target to the last land position
+		gsap.to(newCameraTarget, {
+			x: this._lastLandPosition.x,
+			y: this._lastLandPosition.y,
+			duration: 2,
+			onComplete: () => 
+			{
+				this._world.removeChild(newCameraTarget);
+				this._startLaunch();
+			}
+		});
+
+		this._state = GameState.PANNING;
+	}
+
+	private _startLaunch(): void
+	{
+		this._state = GameState.LAUNCHING;
 	}
 }
