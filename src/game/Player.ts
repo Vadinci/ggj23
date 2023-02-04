@@ -6,17 +6,18 @@ import { ITickable } from "./ITickable";
 export enum PlayerState 
 {
 	IDLE,
+	FLYING,
 	DIGGING
 }
 export class Player implements ITickable
 {
 	public onStopped: Event<[]> = new Event();
 	
-	private _state: PlayerState = PlayerState.DIGGING;
+	private _state: PlayerState = PlayerState.IDLE;
 
 	private _input: Input;
 
-	private _speed = 1.6;
+	private _speed = 0.8;
 	private _speedMultiplier = 1;
 
 	private _position: Point = new Point();
@@ -24,7 +25,7 @@ export class Player implements ITickable
 
 	constructor(input: Input)
 	{
-		this._position.x = 100;
+		this._position.x = 48;
 		this._velocity.y = 0.5;
 		this._input = input;
 	}
@@ -44,11 +45,21 @@ export class Player implements ITickable
 		return this._state;
 	}
 
+	public launch(from: Point, velocity: Point): void
+	{
+		this._position.copyFrom(from);
+		this._velocity.copyFrom(velocity);
+		this._state = PlayerState.FLYING;
+	}
+
 	public tick(): void 
 	{
 		switch(this._state)
 		{
 		case PlayerState.DIGGING:
+			this._digTick();
+			break;
+		case PlayerState.FLYING:
 			this._digTick();
 			break;
 		case PlayerState.IDLE:
@@ -63,7 +74,7 @@ export class Player implements ITickable
 	{
 		if (this._speed > 0) 
 		{
-			this._speed -= 0.001;
+			// this._speed -= 0.001;
 		}
 		else 
 		{

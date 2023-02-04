@@ -1,4 +1,5 @@
 import { core } from "core";
+import { ContentRequest } from "core/services/Content";
 import log from "loglevel";
 import { Container, Rectangle } from "pixi.js";
 import { Camera } from "./Camera";
@@ -9,6 +10,15 @@ import { RootVisual } from "./RootVisual";
 import { TileChunk } from "./TileChunk";
 
 const logger = log.getLogger("Game");
+
+export enum GameState 
+{
+	BOOTUP,
+	LAUNCHING,
+	FLYING,
+	DIGGING,
+	PANNING
+}
 
 export class Game 
 {
@@ -21,6 +31,8 @@ export class Game
 	private _rootVisual: RootVisual;
 
 	private _camera: Camera;
+
+	private _state: GameState = GameState.BOOTUP;
 
 	private _tickables: ITickable[] = [];
 
@@ -42,12 +54,11 @@ export class Game
 	public async start(parent: Container): Promise<void>
 	{
 		await core.services.content.load([
-			["test.yaml", "test"],
-			["tiles/T_Tile_01.png", "tile_01"],
+			...Array.from({ length: 9 }, (v, i) => 
+			{
+				return [`tiles/T_Tile_0${i}.png`,`tile_0${i}`]
+			}) as ContentRequest[]
 		]).complete;
-
-		const config = core.services.content.getYaml("test");
-		logger.log(config);
 
 		parent.addChild(this._world);
 		parent.addChild(this._inputContainer);
@@ -55,16 +66,17 @@ export class Game
 
 		core.services.app.ticker.add(this._onTick, this);
 
-		this._camera.setTarget(this._player);
+		// this._camera.setTarget(this._player);
 
-		this._world.addChild(new TileChunk(Array.from({ length: 256 }, (v,i)=>0)));
+		for (let ii =0; ii < 10; ii++)
+		{
+			const chunk = new TileChunk(ii*16);
+			chunk.y = ii * 128;
+			this._world.addChild(chunk);
+		}
 
 		this._tickables.push(this._player);
-		this._tickables.push(this._rootVisual);
 		this._tickables.push(this._camera);
-		this._world.addChild(this._rootVisual);
-
-		
 	}
 
 	public stop(): void
