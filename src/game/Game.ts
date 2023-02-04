@@ -1,7 +1,7 @@
 import { core } from "core";
 import { ContentRequest } from "core/services/Content";
 import log from "loglevel";
-import { Container, Rectangle } from "pixi.js";
+import { Container, Point, Rectangle } from "pixi.js";
 import { Camera } from "./Camera";
 import { Input } from "./Input";
 import { ITickable } from "./ITickable";
@@ -57,6 +57,10 @@ export class Game
 			...Array.from({ length: 9 }, (v, i) => 
 			{
 				return [`tiles/T_Tile_0${i}.png`,`tile_0${i}`]
+			}) as ContentRequest[],
+			...Array.from({ length: 9 }, (v, i) => 
+			{
+				return [`tiles/T_Tile_0${i}_Alt.png`,`tile_0${i}_alt`]
 			}) as ContentRequest[]
 		]).complete;
 
@@ -77,6 +81,8 @@ export class Game
 
 		this._tickables.push(this._player);
 		this._tickables.push(this._camera);
+
+		this._startFlying();
 	}
 
 	public stop(): void
@@ -88,5 +94,22 @@ export class Game
 	private _onTick(): void
 	{
 		this._tickables.forEach(tickable => tickable.tick());
+	}
+
+	private _startFlying(): void
+	{
+		this._player.onHitGround.once(()=>
+		{
+			this._startDigging();
+		}, this);
+
+		this._camera.setTarget(this._player);
+		this._player.launch(new Point(0, -40), new Point(10,-10));
+	}
+
+	private _startDigging(): void
+	{
+		this._tickables.push(this._rootVisual);
+		this._world.addChild(this._rootVisual);
 	}
 }

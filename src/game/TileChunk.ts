@@ -69,7 +69,7 @@ export class TileChunk extends Container
 	{
 		data.forEach((val, idx) => 
 		{
-			const picture: Sprite = new Sprite(core.services.content.getTexture(`tile_0${val}`));
+			const picture: Sprite = new Sprite(core.services.content.getTexture(`tile_0${val}${Math.random()<0.03?"_alt":""}`));
 			const x = (idx % width) * TILE_SIZE; 
 			const y = Math.floor(idx / width) * TILE_SIZE; 
 			picture.x = x;

@@ -11,6 +11,7 @@ export enum PlayerState
 }
 export class Player implements ITickable
 {
+	public onHitGround: Event<[]> = new Event();
 	public onStopped: Event<[]> = new Event();
 	
 	private _state: PlayerState = PlayerState.IDLE;
@@ -60,7 +61,7 @@ export class Player implements ITickable
 			this._digTick();
 			break;
 		case PlayerState.FLYING:
-			this._digTick();
+			this._flyTick();
 			break;
 		case PlayerState.IDLE:
 			return;
@@ -68,6 +69,23 @@ export class Player implements ITickable
 
 		this._position.x += this._velocity.x;
 		this._position.y += this._velocity.y;
+	}
+
+	private _flyTick(): void
+	{
+		console.log(this._position);
+		if (this._position.y >= 0) 
+		{
+			this._position.y = 0;
+			this.onHitGround.fire();
+			this._state = PlayerState.DIGGING;
+			return;
+		}
+
+		this._velocity.y += 0.05;
+
+		this._velocity.x *= 0.99;
+		this._velocity.y *= 0.99;
 	}
 
 	private _digTick(): void
