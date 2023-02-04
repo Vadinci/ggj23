@@ -20,6 +20,6 @@ export class SeedVisual extends Container implements ITickable
 	public tick(): void
 	{	
 		this._head.x = this._player.x;
-		this._head.y = this._player.y;
+		this._head.y = Math.min(this._player.y, 0);
 	}
 }

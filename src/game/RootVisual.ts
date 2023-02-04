@@ -1,6 +1,6 @@
-import { Container, Graphics, IPointData, Point } from "pixi.js";
+import { Container, Graphics, Point } from "pixi.js";
 import { ITickable } from "./ITickable";
-import { Player, PlayerState } from "./Player";
+import { Player } from "./Player";
 
 export class RootVisual extends Container implements ITickable
 {
@@ -17,7 +17,17 @@ export class RootVisual extends Container implements ITickable
 
 		this._head = new Graphics().beginFill(0xff0000).drawCircle(0,0,1).endFill();
 		this.addChild(this._head);
+	}
+
+	public enable(): void
+	{
 		this._lastBranchNode.copyFrom(this._player);
+	}
+
+	public disable(): void 
+	{
+		this.removeChildren();
+		this.addChild(this._head);
 	}
 
 	public tick(): void

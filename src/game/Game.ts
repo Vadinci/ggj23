@@ -109,18 +109,31 @@ export class Game
 		}, this);
 
 		this._camera.setTarget(this._player);
-		this._player.launch(new Point(0, -40), new Point(10,-10));
+		this._player.launch(new Point(this._lastLandPosition.x, -40), new Point(10,-10));
 
 		this._tickables.push(this._seedVisual);
 		this._world.addChild(this._seedVisual);
 
 		this._state = GameState.FLYING;
+
+		const checkPosition = () => 
+		{
+			if (this._player.y < -150) 
+			{
+				this._rootVisual.disable();
+				return;
+			}
+			requestAnimationFrame(checkPosition);
+		};
+	
+		checkPosition();
 	}
 
 	private _startDigging(): void
 	{
 		this._tickables.splice(this._tickables.indexOf(this._seedVisual),1);
 
+		this._rootVisual.enable();
 		this._tickables.push(this._rootVisual);
 		this._world.addChild(this._rootVisual);
 
@@ -134,8 +147,7 @@ export class Game
 
 	private _panToTree(): void 
 	{
-		// Stop updating the player and root visual
-		this._tickables.splice(this._tickables.indexOf(this._player), 1);
+		// Stop updating the root visual
 		this._tickables.splice(this._tickables.indexOf(this._rootVisual), 1);
 
 		// Create a new camera target
@@ -163,5 +175,6 @@ export class Game
 	private _startLaunch(): void
 	{
 		this._state = GameState.LAUNCHING;
+		setTimeout(()=>this._startFlying(), 2000);
 	}
 }

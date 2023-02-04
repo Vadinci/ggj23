@@ -2,6 +2,9 @@ import { Point } from "pixi.js";
 import { Event } from "core/classes/Event";
 import { Input } from "./Input";
 import { ITickable } from "./ITickable";
+import { core } from "core";
+
+const BASE_SPEED = 0.8;
 
 export enum PlayerState 
 {
@@ -18,7 +21,7 @@ export class Player implements ITickable
 
 	private _input: Input;
 
-	private _speed = 0.8;
+	private _speed = BASE_SPEED;
 	private _speedMultiplier = 1;
 
 	private _position: Point = new Point();
@@ -51,6 +54,7 @@ export class Player implements ITickable
 		this._position.copyFrom(from);
 		this._velocity.copyFrom(velocity);
 		this._state = PlayerState.FLYING;
+		this._speed = BASE_SPEED;
 	}
 
 	public tick(): void 
@@ -98,6 +102,7 @@ export class Player implements ITickable
 			this._speed = 0;
 			this.onStopped.fire();
 			this._state = PlayerState.IDLE
+			return;
 		}
 		
 		this._speedMultiplier -= (this._speedMultiplier - 1)*0.05;
