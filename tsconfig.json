@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"baseUrl": "./src",
+		"typeRoots": [
+			"node_modules/@types"
+		],
+		"target": "ESNext",
+		"useDefineForClassFields": true,
+		"module": "ESNext",
+		"lib": ["ESNext", "DOM"],
+		"moduleResolution": "Node",
+		"strict": true,
+		"sourceMap": true,
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"noEmit": true,
+
+		"declaration": false,
+		"noImplicitOverride": true,
+		"noImplicitAny": true,
+	},
+		"include": ["src/**/*.ts"]
+  }
