@@ -1,12 +1,23 @@
 import { Point } from "pixi.js";
+import { Event } from "core/classes/Event";
 import { Input } from "./Input";
 import { ITickable } from "./ITickable";
 
+export enum PlayerState 
+{
+	IDLE,
+	DIGGING
+}
 export class Player implements ITickable
 {
+	public onStopped: Event<[]> = new Event();
+	
+	private _state: PlayerState = PlayerState.DIGGING;
+
 	private _input: Input;
 
 	private _speed = 1.6;
+	private _speedMultiplier = 1;
 
 	private _position: Point = new Point();
 	private _velocity: Point = new Point();
@@ -20,16 +31,48 @@ export class Player implements ITickable
 
 	public get x(): number 
 	{
-		return this._position.x;
+		return this._position.x | 0;
 	}
 	
 	public get y(): number 
 	{
-		return this._position.y;
+		return this._position.y | 0;
+	}
+
+	public get state(): PlayerState
+	{
+		return this._state;
 	}
 
 	public tick(): void 
 	{
+		switch(this._state)
+		{
+		case PlayerState.DIGGING:
+			this._digTick();
+			break;
+		case PlayerState.IDLE:
+			return;
+		}
+
+		this._position.x += this._velocity.x;
+		this._position.y += this._velocity.y;
+	}
+
+	private _digTick(): void
+	{
+		if (this._speed > 0) 
+		{
+			this._speed -= 0.001;
+		}
+		else 
+		{
+			this._speed = 0;
+			this.onStopped.fire();
+			this._state = PlayerState.IDLE
+		}
+		
+		this._speedMultiplier -= (this._speedMultiplier - 1)*0.05;
 		
 		if (this._input.isTouching)
 		{
@@ -37,14 +80,11 @@ export class Player implements ITickable
 			this._velocity.x += dx; // Math.sqrt(Math.abs(dx))*Math.sign(dx);
 		}
 
-		this._velocity.y += 0.1;
+		this._velocity.y += 0.05;
 
 		const magnitude = Math.sqrt(this._velocity.x ** 2 + this._velocity.y ** 2);
-		this._velocity.x *= (this._speed/magnitude);
-		this._velocity.y *= (this._speed/magnitude);
-
-		
-		this._position.x += this._velocity.x;
-		this._position.y += this._velocity.y;
+		const targetSpeed = this._speed * this._speedMultiplier;
+		this._velocity.x *= (targetSpeed/magnitude);
+		this._velocity.y *= (targetSpeed/magnitude);
 	}
 }

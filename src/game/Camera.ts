@@ -1,21 +1,30 @@
 import { core } from "core";
-import { Container, IPointData } from "pixi.js";
+import { Container, IPointData, Point } from "pixi.js";
 import { ITickable } from "./ITickable";
 
 export class Camera implements ITickable 
 {
 	private _world: Container;
-	private _player: IPointData;
+	private _target: IPointData = new Point(0,0);
 
-	public constructor(world: Container, player: IPointData)
+	public constructor(world: Container)
 	{
 		this._world = world;
-		this._player = player;
+	}
+
+	public setTarget(target: IPointData): void
+	{
+		this._target = target;
 	}
 
 	public tick(): void 
 	{
-		this._world.x = -this._player.x + core.services.app.app.screen.width/2;
-		this._world.y = -this._player.y + core.services.app.app.screen.height/2;
+		// focus on player
+		this._world.x = -this._target.x;
+		this._world.y = -this._target.y;
+
+		// offset to center
+		this._world.x += core.services.app.app.screen.width/2
+		this._world.y += core.services.app.app.screen.height/2
 	}
 }

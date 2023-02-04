@@ -8,19 +8,22 @@ import { SCALE_MODES } from "pixi.js";
 /**
  * global logger access
  */
+// eslint-disable-next-line
+// @ts-ignore
 window["log"] = log;
 log.setDefaultLevel("DEBUG");
 
 const app = new AppService({
-	width: 240,
-	height: 360,
+	width: 96,
+	height: 168,
 	antialias: false,
 	//resizeTo: window,
-	resolution: 2,
+	resolution: 4,
 	backgroundColor: 0x88aaff
 });
 
 settings.SCALE_MODE = SCALE_MODES.NEAREST;
+settings.ROUND_PIXELS = true;
 
 export const core = new Core({
 	app,

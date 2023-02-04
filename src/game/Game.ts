@@ -5,7 +5,8 @@ import { Camera } from "./Camera";
 import { Input } from "./Input";
 import { ITickable } from "./ITickable";
 import { Player } from "./Player";
-import { PlayerVisual } from "./PlayerVisual";
+import { RootVisual } from "./RootVisual";
+import { TileChunk } from "./TileChunk";
 
 const logger = log.getLogger("Game");
 
@@ -17,7 +18,7 @@ export class Game
 	private _world: Container;
 
 	private _player: Player;
-	private _playerVisual: PlayerVisual;
+	private _rootVisual: RootVisual;
 
 	private _camera: Camera;
 
@@ -33,15 +34,16 @@ export class Game
 		this._inputContainer.hitArea = new Rectangle(-5000, -5000, 10000, 10000);
 
 		this._player = new Player(this._input);
-		this._playerVisual = new PlayerVisual(this._player);
+		this._rootVisual = new RootVisual(this._player);
 
-		this._camera = new Camera(this._world, this._player);
+		this._camera = new Camera(this._world);
 	}
 
 	public async start(parent: Container): Promise<void>
 	{
 		await core.services.content.load([
-			["test.yaml", "test"]
+			["test.yaml", "test"],
+			["tiles/T_Tile_01.png", "tile_01"],
 		]).complete;
 
 		const config = core.services.content.getYaml("test");
@@ -53,10 +55,16 @@ export class Game
 
 		core.services.app.ticker.add(this._onTick, this);
 
+		this._camera.setTarget(this._player);
+
+		this._world.addChild(new TileChunk(Array.from({ length: 256 }, (v,i)=>0)));
+
 		this._tickables.push(this._player);
-		this._tickables.push(this._playerVisual);
+		this._tickables.push(this._rootVisual);
 		this._tickables.push(this._camera);
-		this._world.addChild(this._playerVisual);
+		this._world.addChild(this._rootVisual);
+
+		
 	}
 
 	public stop(): void
