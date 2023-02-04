@@ -92,7 +92,7 @@ export class Player implements ITickable
 	{
 		if (this._speed > 0) 
 		{
-			// this._speed -= 0.001;
+			this._speed -= 0.001;
 		}
 		else 
 		{

@@ -22,11 +22,6 @@ export class RootVisual extends Container implements ITickable
 
 	public tick(): void
 	{
-		if (this._player.state !== PlayerState.DIGGING)
-		{
-			return;
-		}
-		
 		this._head.x = this._player.x;
 		this._head.y = this._player.y;
 

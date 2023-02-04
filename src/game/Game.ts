@@ -7,6 +7,7 @@ import { Input } from "./Input";
 import { ITickable } from "./ITickable";
 import { Player } from "./Player";
 import { RootVisual } from "./RootVisual";
+import { SeedVisual } from "./SeedVisual";
 import { TileChunk } from "./TileChunk";
 
 const logger = log.getLogger("Game");
@@ -29,6 +30,7 @@ export class Game
 
 	private _player: Player;
 	private _rootVisual: RootVisual;
+	private _seedVisual: SeedVisual;
 
 	private _camera: Camera;
 
@@ -47,6 +49,7 @@ export class Game
 
 		this._player = new Player(this._input);
 		this._rootVisual = new RootVisual(this._player);
+		this._seedVisual = new SeedVisual(this._player);
 
 		this._camera = new Camera(this._world);
 	}
@@ -105,10 +108,15 @@ export class Game
 
 		this._camera.setTarget(this._player);
 		this._player.launch(new Point(0, -40), new Point(10,-10));
+
+		this._tickables.push(this._seedVisual);
+		this._world.addChild(this._seedVisual);
 	}
 
 	private _startDigging(): void
 	{
+		this._tickables.splice(this._tickables.indexOf(this._seedVisual),1);
+
 		this._tickables.push(this._rootVisual);
 		this._world.addChild(this._rootVisual);
 	}

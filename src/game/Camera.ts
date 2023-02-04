@@ -7,10 +7,23 @@ export class Camera implements ITickable
 	private _world: Container;
 	private _target: IPointData = new Point(0,0);
 
+	private _position: Point = new Point();
+
 	public constructor(world: Container)
 	{
 		this._world = world;
 	}
+
+	public get x(): number
+	{
+		return this._position.x;
+	}
+
+	public get y(): number
+	{
+		return this._position.y;
+	}
+
 
 	public setTarget(target: IPointData): void
 	{
@@ -19,9 +32,10 @@ export class Camera implements ITickable
 
 	public tick(): void 
 	{
+		this._position.copyFrom(this._target);
 		// focus on player
-		this._world.x = -this._target.x;
-		this._world.y = -this._target.y;
+		this._world.x = -this._position.x;
+		this._world.y = -this._position.y;
 
 		// offset to center
 		this._world.x += core.services.app.app.screen.width/2
