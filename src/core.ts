@@ -23,7 +23,7 @@ const app = new AppService({
 });
 
 settings.SCALE_MODE = SCALE_MODES.NEAREST;
-settings.ROUND_PIXELS = true;
+settings.ROUND_PIXELS = false;
 
 export const core = new Core({
 	app,

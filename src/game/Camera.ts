@@ -33,12 +33,16 @@ export class Camera implements ITickable
 	public tick(): void 
 	{
 		this._position.copyFrom(this._target);
-		// focus on player
+		
+		// focus on target
 		this._world.x = -this._position.x;
 		this._world.y = -this._position.y;
 
 		// offset to center
 		this._world.x += core.services.app.app.screen.width/2
 		this._world.y += core.services.app.app.screen.height/2
+
+		this._world.x = this._world.x | 0;
+		this._world.y = this._world.y | 0;
 	}
 }

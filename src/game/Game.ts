@@ -11,6 +11,7 @@ import { Player } from "./Player";
 import { RootVisual } from "./RootVisual";
 import { SeedVisual } from "./SeedVisual";
 import { TileLayer } from "./TileLayer";
+import { Tree } from "./Tree";
 
 const logger = log.getLogger("Game");
 
@@ -83,8 +84,11 @@ export class Game
 			{
 				return [`misc/T_Misc_Cloud_0${i}.png`,`cloud_0${i}`]
 			}) as ContentRequest[],
-			
-			["sprites/S_Hand_22x24@6.png","hand"]
+
+			["sprites/S_Hand_22x24@6.png","hand"],
+			["objects/T_Object_Tree_00.png","tree_00"],
+			["objects/T_Object_Tree_01.png","tree_01"],
+			["objects/T_Object_TreeCanopy.png","tree_canopy"],
 		]).complete;
 
 		parent.addChild(this._world);
@@ -96,7 +100,14 @@ export class Game
 		this._tickables.push(this._player);
 		this._tickables.push(this._camera);
 
-		this._startFlying();
+		const tree = new Tree(10);
+		this._world.addChild(tree);
+
+
+		this._tickables.push(tree);
+
+
+		//this._startFlying();
 	}
 
 	public stop(): void
