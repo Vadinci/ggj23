@@ -3,9 +3,11 @@ import { IService } from "../interfaces/IService";
 import { Event } from "../classes/Event";
 import { Texture } from "@pixi/core";
 import YAML from "yaml";
+import log from "loglevel";
 
 export type ContentRequest = [nameOrUrl: string, name?: string];
 
+const logger = log.getLogger("Content");
 export interface LoaderProgress 
 {
 	readonly count: number;
@@ -61,8 +63,6 @@ export class ContentService implements IService
 			{
 				name = url.split(".")[0];
 			}
-
-			console.log(name, url);
 			loader.add(name, url);
 		});
 
@@ -89,11 +89,11 @@ export class ContentService implements IService
 			{
 				const resource = loader.resources[key];
 				const extension = resource.extension;
-				console.dir(resource);
+				logger.info(resource);
 				this._resources[extension] = this._resources[extension] ?? [];
 				if (this._resources[extension][resource.name]) 
 				{
-					console.warn(`resource with duplicate name: ${resource.name} ${resource.url}. This resource can not be retrieved via get[Resource] methods!`);
+					logger.warn(`resource with duplicate name: ${resource.name} ${resource.url}. This resource can not be retrieved via get[Resource] methods!`);
 				}
 				else 
 				{
