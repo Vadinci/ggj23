@@ -1,10 +1,11 @@
 import { core } from "core";
+import { Random } from "core/classes/Random";
 import { Container, Sprite } from "pixi.js";
 
 const TILE_SIZE = 8;
 
 const LAYER_DEPTH = 24;
-export class TileChunk extends Container 
+export class TileChunk extends Container
 {
 	constructor(startHeight = 0, width = 16, height = 16)
 	{
@@ -16,7 +17,7 @@ export class TileChunk extends Container
 		this.cacheAsBitmap = true;
 	}
 
-	private _createData(startHeight: number, width: number, height: number): number[] 
+	private _createData(startHeight: number, width: number, height: number): number[]
 	{
 		const result: number[] = [];
 		for (let iy = startHeight; iy < startHeight + height; iy++)
@@ -58,7 +59,13 @@ export class TileChunk extends Container
 				}
 				else
 				{
-					result.push(8);
+					if (Random.bool(.7))
+					{
+						result.push(8);
+					}
+					else {
+						result.push(9);
+					}
 				}
 			}
 		}
@@ -67,11 +74,11 @@ export class TileChunk extends Container
 
 	private _draw(data: number[], width: number): void
 	{
-		data.forEach((val, idx) => 
+		data.forEach((val, idx) =>
 		{
-			const picture: Sprite = new Sprite(core.services.content.getTexture(`tile_0${val}${Math.random()<0.03?"_alt":""}`));
-			const x = (idx % width) * TILE_SIZE; 
-			const y = Math.floor(idx / width) * TILE_SIZE; 
+			const picture: Sprite = new Sprite(core.services.content.getTexture(`tile_0${val}${Random.bool(0.03)?"_alt":""}`));
+			const x = (idx % width) * TILE_SIZE;
+			const y = Math.floor(idx / width) * TILE_SIZE;
 			picture.x = x;
 			picture.y = y;
 			this.addChild(picture);
