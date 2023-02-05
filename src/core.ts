@@ -19,7 +19,7 @@ const app = new AppService({
 	antialias: false,
 	//resizeTo: window,
 	resolution: 4,
-	backgroundColor: 0x88aaff
+	backgroundColor: 0xD8EAF5
 });
 
 settings.SCALE_MODE = SCALE_MODES.NEAREST;
