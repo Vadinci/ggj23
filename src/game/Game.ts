@@ -6,9 +6,11 @@ import log from "loglevel";
 import { Container, Point, Rectangle } from "pixi.js";
 import { Camera } from "./Camera";
 import { CloudLayer } from "./CloudLayer";
+import { Collisions } from "./Collisions";
 import { Input } from "./Input";
 import { ITickable } from "./ITickable";
 import { LaunchController } from "./LaunchController";
+import { OBSTACLES, ObstacleSpawner } from "./ObstacleSpawner";
 import { Player } from "./Player";
 import { RootVisual } from "./RootVisual";
 import { SeedVisual } from "./SeedVisual";
@@ -31,6 +33,8 @@ export class Game
 	private _inputContainer: Container;
 	private _input: Input;
 	private _launchController: LaunchController;
+	private _collisions: Collisions;
+	private _obstacleSpawner: ObstacleSpawner;
 
 	private _world: Container;
 
@@ -63,6 +67,9 @@ export class Game
 		this._seedVisual = new SeedVisual(this._player);
 
 		this._camera = new Camera(this._world);
+
+		this._collisions = new Collisions();
+		this._tickables.push(this._collisions);
 		
 		this._tileLayer = new TileLayer(this._camera);
 		this._world.addChild(this._tileLayer);
@@ -74,6 +81,9 @@ export class Game
 
 		this._launchController = new LaunchController(this._input);
 		this._tickables.push(this._launchController);
+
+		this._obstacleSpawner = new ObstacleSpawner(this._world, this._player, this._collisions);
+		this._tickables.push(this._obstacleSpawner);
 
 	}
 
@@ -97,6 +107,8 @@ export class Game
 			["objects/T_Object_Tree_00.png","tree_00"],
 			["objects/T_Object_Tree_01.png","tree_01"],
 			["objects/T_Object_TreeCanopy.png","tree_canopy"],
+
+			...OBSTACLES.map(key => [`objects/T_Object_${key}.png`, `obstacle_${key}`] as ContentRequest)
 		]).complete;
 
 		parent.addChild(this._world);

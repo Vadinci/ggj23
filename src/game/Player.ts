@@ -2,6 +2,7 @@ import { Point } from "pixi.js";
 import { Event } from "core/classes/Event";
 import { Input } from "./Input";
 import { ITickable } from "./ITickable";
+import { ICollider } from "./Collisions";
 
 const BASE_SPEED = 0.8;
 
@@ -11,10 +12,15 @@ export enum PlayerState
 	FLYING,
 	DIGGING
 }
-export class Player implements ITickable
+export class Player implements ITickable, ICollider 
 {
 	public onHitGround: Event<[]> = new Event();
 	public onStopped: Event<[]> = new Event();
+
+	public readonly width = 1;
+	public readonly height = 1;
+
+	public readonly tag = "player";
 	
 	private _state: PlayerState = PlayerState.IDLE;
 
@@ -72,6 +78,11 @@ export class Player implements ITickable
 
 		this._position.x += this._velocity.x;
 		this._position.y += this._velocity.y;
+	}
+
+	public handleCollision(other: ICollider): void 
+	{
+		//
 	}
 
 	private _flyTick(): void
