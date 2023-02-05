@@ -13,12 +13,32 @@ import { SCALE_MODES } from "pixi.js";
 window["log"] = log;
 log.setDefaultLevel("DEBUG");
 
+const TARGET_WIDTH = 96;
+const TARGET_HEIGHT = 186;
+
+const TARGET_RATIO = TARGET_WIDTH/TARGET_HEIGHT;
+const WINDOW_RATIO = window.innerWidth/window.innerHeight; 
+
+let height = TARGET_HEIGHT;
+let width = TARGET_WIDTH;
+
+if (TARGET_RATIO > WINDOW_RATIO)
+{
+	// window is taller than expected
+	height = width/WINDOW_RATIO;
+}
+else 
+{
+	width = height*WINDOW_RATIO;
+}
+
+
 const app = new AppService({
-	width: 96,
-	height: 168,
+	width: width,
+	height: height,
 	antialias: false,
 	//resizeTo: window,
-	resolution: 4,
+	resolution: window.innerHeight/height,
 	backgroundColor: 0xd6e5ff
 });
 

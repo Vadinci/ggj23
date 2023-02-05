@@ -5,8 +5,9 @@ import tsconfigPaths from 'vite-tsconfig-paths';
  */
 const config = {
 	build: {
+		minify: true,
 		assetsDir: "app",
-		rollupOptions: {
+		/*rollupOptions: {
 			output: {
 				manualChunks: (id) => 
 				{
@@ -17,7 +18,7 @@ const config = {
 					return 'vendors';
 				}
 			}
-		}
+		}*/
 	},
 	plugins: [tsconfigPaths()]
 }

@@ -15,6 +15,7 @@ export enum PlayerState
 export class Player implements ITickable, ICollider 
 {
 	public onHitGround: Event<[]> = new Event();
+	public onHitObstacle: Event<[]> = new Event();
 	public onStopped: Event<[]> = new Event();
 
 	public readonly width = 1;
@@ -110,16 +111,20 @@ export class Player implements ITickable, ICollider
 			break;
 		case 'Bone':
 			this._speedMultiplier = 0.5;
+			this.onHitObstacle.fire();
 			break;
 		case 'Stone':
 		case 'Stone_Alt':
 			this._speed -= 0.2;
+			this.onHitObstacle.fire();
 			break;
 		case 'Oil':
 			this._steerMultiplier = 0.5;
+			this.onHitObstacle.fire();
 			break;
 		case 'Saw':
 			this._speed = 0;
+			this.onHitObstacle.fire();
 			break;
 		default:
 			break;
@@ -132,6 +137,8 @@ export class Player implements ITickable, ICollider
 		{
 			this._position.y = 0;
 			this.onHitGround.fire();
+			this._position.y = -this._velocity.y;
+			this._position.x -= this._velocity.x;
 			this._state = PlayerState.DIGGING;
 			return;
 		}

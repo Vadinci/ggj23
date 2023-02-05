@@ -47,6 +47,7 @@ export class Game
 	private _tileLayer: TileLayer;
 	private _cloudLayer: CloudLayer;
 	private _activeTree!: Tree;
+	private _sapling!: SpriteEffect;
 
 	private _camera: Camera;
 
@@ -89,6 +90,11 @@ export class Game
 		this._obstacleSpawner = new ObstacleSpawner(this._world, this._player, this._collisions);
 		this._tickables.push(this._obstacleSpawner);
 
+		this._player.onHitObstacle.listen(()=>
+		{
+			this._camera.shake(4);
+		},this);
+
 	}
 
 	public async start(parent: Container): Promise<void>
@@ -110,6 +116,8 @@ export class Game
 			}) as ContentRequest[],
 
 			["sprites/S_Hand_22x24@6.png","hand"],
+			["sprites/S_Seed_16x5@3.png","seed"],
+			["sprites/S_Sapling_22x24@6.png","sapling"],
 			["objects/T_Object_Tree_00.png","tree_00"],
 			["objects/T_Object_Tree_01.png","tree_01"],
 			["objects/T_Object_TreeCanopy.png","tree_canopy"],
@@ -234,7 +242,18 @@ export class Game
 		this._tickables.push(this._rootVisual);
 		this._world.addChild(this._rootVisual);
 
-		this._camera.shake(5);
+		this._world.removeChild(this._seedVisual);
+
+		// spawn effect
+		this._sapling = new SpriteEffect("sapling", 0.2, { width: 22, height: 24 });
+		this._world.addChild(this._sapling.sprite);
+		this._sapling.play();
+		this._sapling.sprite.anchor.set(0.5,1);
+
+		this._sapling.sprite.position.copyFrom(this._lastLandPosition);
+
+		this._camera.shake(8);
+		this._camera.setOffset(0,40);
 
 		this._player.onStopped.once(()=>
 		{
@@ -259,9 +278,12 @@ export class Game
 	{
 		// Stop updating the root visual
 		this._tickables.splice(this._tickables.indexOf(this._rootVisual), 1);
+		this._camera.setOffset(0,0);
+
+		this._world.removeChild(this._sapling.sprite);
 
 		this._world.removeChild(this._activeTree);
-		this._activeTree = new Tree(1+Math.floor(Math.pow(this._player.score,0.7)/10));
+		this._activeTree = new Tree(1+Math.floor(Math.pow(this._player.score,0.78)/10));
 		this._activeTree.position.copyFrom(this._lastLandPosition);
 		this._world.addChild(this._activeTree);
 
