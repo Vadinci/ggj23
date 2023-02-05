@@ -121,6 +121,7 @@ export class Game
 			["objects/T_Object_Tree_00.png","tree_00"],
 			["objects/T_Object_Tree_01.png","tree_01"],
 			["objects/T_Object_TreeCanopy.png","tree_canopy"],
+			["objects/T_Object_Tree_Root.png","tree_root"],
 
 			...OBSTACLES.map(key => [`objects/T_Object_${key}.png`, `obstacle_${key}`] as ContentRequest),
 
@@ -142,7 +143,7 @@ export class Game
 		this._tickables.push(this._player);
 		this._tickables.push(this._camera);
 
-		this._activeTree = new Tree(3);
+		this._activeTree = new Tree(2);
 		this._world.addChild(this._activeTree);
 
 		const logo = new Logo(this._input);
@@ -215,6 +216,13 @@ export class Game
 		effect.sprite.position.copyFrom(launchPos);
 		effect.sprite.x += 20;
 		effect.sprite.y -= 10;
+
+		gsap.to(effect.sprite, {
+			x: "+= 50",
+			y: "-= 20",
+			ease: "ease.quadIn",
+			duration: 0.2
+		});
 
 		this._tickables.push(this._seedVisual);
 		this._world.addChild(this._seedVisual);
