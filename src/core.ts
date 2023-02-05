@@ -11,13 +11,13 @@ import { SCALE_MODES } from "pixi.js";
 // eslint-disable-next-line
 // @ts-ignore
 window["log"] = log;
-log.setDefaultLevel("DEBUG");
+log.setDefaultLevel("ERROR");
 
 const TARGET_WIDTH = 96;
 const TARGET_HEIGHT = 186;
 
 const TARGET_RATIO = TARGET_WIDTH/TARGET_HEIGHT;
-const WINDOW_RATIO = window.innerWidth/window.innerHeight; 
+const WINDOW_RATIO = window.innerWidth/window.innerHeight;
 
 let height = TARGET_HEIGHT;
 let width = TARGET_WIDTH;
@@ -27,7 +27,7 @@ if (TARGET_RATIO > WINDOW_RATIO)
 	// window is taller than expected
 	height = width/WINDOW_RATIO;
 }
-else 
+else
 {
 	width = height*WINDOW_RATIO;
 }
