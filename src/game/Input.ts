@@ -1,4 +1,5 @@
 import { core } from "core";
+import { Event } from "core/classes/Event";
 import log from "loglevel";
 import { Container, InteractionEvent, Point } from "pixi.js";
 
@@ -6,6 +7,9 @@ const logger = log.getLogger("Input");
 
 export class Input 
 {
+	public onTouchStart: Event<[]> = new Event();
+	public onTouchEnd: Event<[]> = new Event();
+
 	private _container: Container;
 	private _listeners: {event: string; handler: () => void}[] = [];
 
@@ -82,6 +86,7 @@ export class Input
 		logger.debug("input started");
 		this._activePointer = e.data.identifier;
 		this._setTouchPositionFromEvent(e);
+		this.onTouchStart.fire();
 	}
 
 	private _handlePointerMove(e: InteractionEvent): void
@@ -108,5 +113,7 @@ export class Input
 		}
 		logger.debug("input ended");
 		this._activePointer = -1;
+
+		this.onTouchEnd.fire();
 	}
 }

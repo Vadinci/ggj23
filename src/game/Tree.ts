@@ -3,25 +3,20 @@ import { Random } from "core/classes/Random";
 import { Container, Sprite } from "pixi.js";
 import { ITickable } from "./ITickable";
 
-export class Tree extends Container implements ITickable
+export class Tree extends Container
 {
-	private _baseAngle = 0;
-	private _vangular = 0.3;
-	private _angleShake = 0;
+	private _treeHeight: number;
+
+	public get length(): number
+	{
+		return this._treeHeight * 8;
+	}
+
 	constructor(height = 1)
 	{
 		super();
+		this._treeHeight = height;
 		this._createVisual(height);
-	}
-
-	tick(): void 
-	{
-		this._baseAngle -= this._vangular;
-		this._vangular *= 0.98;
-		this._angleShake += 0.03;
-		this._angleShake *= 0.95;
-
-		this.angle = this._baseAngle + Math.random()*this._angleShake - this._angleShake/2;
 	}
 	
 	private _createVisual(height: number)

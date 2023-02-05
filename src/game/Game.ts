@@ -7,6 +7,7 @@ import { Camera } from "./Camera";
 import { CloudLayer } from "./CloudLayer";
 import { Input } from "./Input";
 import { ITickable } from "./ITickable";
+import { LaunchController } from "./LaunchController";
 import { Player } from "./Player";
 import { RootVisual } from "./RootVisual";
 import { SeedVisual } from "./SeedVisual";
@@ -28,6 +29,7 @@ export class Game
 {
 	private _inputContainer: Container;
 	private _input: Input;
+	private _launchController: LaunchController;
 
 	private _world: Container;
 
@@ -36,6 +38,7 @@ export class Game
 	private _seedVisual: SeedVisual;
 	private _tileLayer: TileLayer;
 	private _cloudLayer: CloudLayer;
+	private _activeTree!: Tree;
 
 	private _camera: Camera;
 
@@ -67,6 +70,10 @@ export class Game
 		this._cloudLayer = new CloudLayer(this._camera);
 		this._world.addChild(this._cloudLayer);
 		this._tickables.push(this._cloudLayer);
+
+		this._launchController = new LaunchController(this._input);
+		this._tickables.push(this._launchController);
+
 	}
 
 	public async start(parent: Container): Promise<void>
@@ -100,14 +107,10 @@ export class Game
 		this._tickables.push(this._player);
 		this._tickables.push(this._camera);
 
-		const tree = new Tree(10);
-		this._world.addChild(tree);
+		this._activeTree = new Tree(3);
+		this._world.addChild(this._activeTree);
 
-
-		this._tickables.push(tree);
-
-
-		//this._startFlying();
+		this._startLaunch();
 	}
 
 	public stop(): void
@@ -130,7 +133,15 @@ export class Game
 		}, this);
 
 		this._camera.setTarget(this._player);
-		this._player.launch(new Point(this._lastLandPosition.x, -10), new Point(10,-10));
+
+		const tree = this._activeTree;
+		const launchPos = new Point(
+			tree.x - Math.cos(tree.rotation+Math.PI/2)*tree.length,
+			tree.y - Math.sin(tree.rotation+Math.PI/2)*tree.length,
+		)
+
+		this._player.launch(launchPos, new Point(5,-5));
+		
 
 		this._tickables.push(this._seedVisual);
 		this._world.addChild(this._seedVisual);
@@ -196,6 +207,12 @@ export class Game
 	private _startLaunch(): void
 	{
 		this._state = GameState.LAUNCHING;
-		setTimeout(()=>this._startFlying(), 2000);
+		this._launchController.enable(this._activeTree);
+
+		this._launchController.onFire.once(()=>
+		{
+			this._launchController.disable();
+			this._startFlying();
+		},this);
 	}
 }
