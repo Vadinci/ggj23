@@ -10,6 +10,8 @@ import { Collisions } from "./Collisions";
 import { Input } from "./Input";
 import { ITickable } from "./ITickable";
 import { LaunchController } from "./LaunchController";
+import { Logo } from "./Logo";
+import { NumberDisplay } from "./NumberDisplay";
 import { OBSTACLES, ObstacleSpawner } from "./ObstacleSpawner";
 import { Player } from "./Player";
 import { RootVisual } from "./RootVisual";
@@ -115,6 +117,10 @@ export class Game
 			["sprites/S_ObjectHit_16x16@4.png","object_hit"],
 			["sprites/S_Impact_16x16@4.png","impact"],
 			["sprites/S_Launch_16x16@4.png","launch"],
+
+			["ui/UI_Logo.png","logo"],
+
+			["ui/F_Numbers_5x8@10.png","numbers"],
 		]).complete;
 
 		parent.addChild(this._world);
@@ -128,6 +134,30 @@ export class Game
 
 		this._activeTree = new Tree(3);
 		this._world.addChild(this._activeTree);
+
+		const logo = new Logo(this._input);
+		logo.y -= 36;
+		this._world.addChild(logo);
+
+		// spawn effect
+		const hand = new SpriteEffect("hand", 0.18, { width: 22, height: 24 });
+		this._world.addChild(hand.sprite);
+
+		hand.sprite.loop = true;
+		hand.play();
+		hand.sprite.position.set(-4,-16);
+
+		this._input.onTouchStart.once(()=>
+		{
+			gsap.to(hand.sprite, {
+				alpha: 0,
+				duration: 0.5,
+				onComplete: ()=>
+				{
+					hand.sprite.destroy();
+				}
+			});
+		}, this);
 
 		this._startLaunch();
 	}
@@ -164,13 +194,14 @@ export class Game
 		// spawn effect
 		const effect = new SpriteEffect("launch", 0.2, { width: 16, height: 16 });
 		this._world.addChild(effect.sprite);
+
 		effect.play(()=>
 		{
 			this._world.removeChild(effect.sprite);
 		});
-
 		effect.sprite.position.copyFrom(launchPos);
-		
+		effect.sprite.x += 20;
+		effect.sprite.y -= 10;
 
 		this._tickables.push(this._seedVisual);
 		this._world.addChild(this._seedVisual);
@@ -233,6 +264,12 @@ export class Game
 		newCameraTarget.y = this._camera.y;
 		this._world.addChild(newCameraTarget);
 		this._camera.setTarget(newCameraTarget);
+
+
+		const scoreVisual = new NumberDisplay(this._player.score);
+		this._world.addChild(scoreVisual);
+		scoreVisual.position.copyFrom(this._lastLandPosition);
+		scoreVisual.y = -32;
 
 		// Animate the target to the last land position
 		gsap.to(newCameraTarget, {
