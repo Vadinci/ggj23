@@ -157,7 +157,7 @@ export class Game
 		this._world.addChild(this._activeTree);
 
 		const logo = new Logo(this._input);
-		logo.y -= 36;
+		logo.y -= 12;
 		this._world.addChild(logo);
 
 		// spawn effect
