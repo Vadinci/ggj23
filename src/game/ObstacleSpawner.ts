@@ -6,7 +6,7 @@ import { Obstacle } from "./Obstacle";
 import { Player } from "./Player";
 
 const CHUNK_SIZE = 24;
-const RANGE = 3;
+const RANGE = 5;
 
 export const OBSTACLES: string[] = [
 	'Water',
@@ -47,7 +47,7 @@ export class ObstacleSpawner implements ITickable
 		const newObstacleMap = new Map<string, true>();
 		for (let iy = row - RANGE; iy <= row + RANGE; iy++)
 		{
-			if (iy < 2) 
+			if (iy < 3) 
 			{
 				continue;
 			}
@@ -91,7 +91,10 @@ export class ObstacleSpawner implements ITickable
 		const obstacle = new Obstacle(tag);
 		obstacle.x = Random.float(col, col+1)*CHUNK_SIZE;
 		obstacle.y = Random.float(row, row+1)*CHUNK_SIZE;
+
+		obstacle.onCollect.listen(this._handleObstacleCollect, this);
 		
+		this._collisions.addCollider(obstacle);
 		this._obstacles.set(hash, obstacle);
 		this._world.addChild(obstacle);
 	}
@@ -100,6 +103,7 @@ export class ObstacleSpawner implements ITickable
 	{
 		this._world.removeChild(obstacle);
 		this._collisions.removeCollider(obstacle);
+		obstacle.onCollect.removeListener(this._handleObstacleCollect, this);
 	}
 
 	private _findCurrentChunk(): [col:number, row:number]
@@ -107,5 +111,18 @@ export class ObstacleSpawner implements ITickable
 		const col = Math.floor(this._player.x / (CHUNK_SIZE));
 		const row = Math.floor(this._player.y / (CHUNK_SIZE));
 		return [col, row];
+	}
+
+	private _handleObstacleCollect(obstacle: Obstacle): void
+	{
+		this.removeObstacle(obstacle);
+		// find the obstacle in the map of type <string, Obstacle> and change it's entry to null
+		this._obstacles.forEach((value, key) => 
+		{
+			if (value === obstacle) 
+			{
+				this._obstacles.set(key, null);
+			}
+		});
 	}
 }

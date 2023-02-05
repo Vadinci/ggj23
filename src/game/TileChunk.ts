@@ -3,7 +3,7 @@ import { Container, Sprite } from "pixi.js";
 
 const TILE_SIZE = 8;
 
-const LAYER_DEPTH = 25;
+const LAYER_DEPTH = 16;
 export class TileChunk extends Container 
 {
 	constructor(startHeight = 0, width = 16, height = 16)

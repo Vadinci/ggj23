@@ -1,10 +1,12 @@
 import { core } from "core";
+import { Event } from "core/classes/Event";
 import { Container, Sprite } from "pixi.js";
 import { ICollider } from "./Collisions";
 
 export class Obstacle extends Container implements ICollider 
 {
 	public readonly tag: string;
+	public onCollect: Event<[obstacle:this]> = new Event();
 
 	constructor(tag: string)
 	{
@@ -16,7 +18,7 @@ export class Obstacle extends Container implements ICollider
 	
 	handleCollision(other: ICollider): void 
 	{
-		// don't care
+		this.onCollect.fire(this);
 	}
 
 	

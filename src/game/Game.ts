@@ -69,6 +69,7 @@ export class Game
 		this._camera = new Camera(this._world);
 
 		this._collisions = new Collisions();
+		this._collisions.addCollider(this._player);
 		this._tickables.push(this._collisions);
 		
 		this._tileLayer = new TileLayer(this._camera);

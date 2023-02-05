@@ -28,6 +28,7 @@ export class Player implements ITickable, ICollider
 
 	private _speed = BASE_SPEED;
 	private _speedMultiplier = 1;
+	private _steerMultiplier = 1;
 
 	private _position: Point = new Point();
 	private _velocity: Point = new Point();
@@ -82,7 +83,30 @@ export class Player implements ITickable, ICollider
 
 	public handleCollision(other: ICollider): void 
 	{
-		//
+		switch(other.tag) 
+		{
+		case 'Water':
+			// 
+			break;
+		case 'Nutrients':
+			this._speed += 0.2;
+			break;
+		case 'Bone':
+			this._speedMultiplier = 0.5;
+			break;
+		case 'Stone':
+		case 'Stone_Alt':
+			this._speed -= 0.2;
+			break;
+		case 'Oil':
+			this._steerMultiplier = 0.5;
+			break;
+		case 'Saw':
+			this._speed = 0;
+			break;
+		default:
+			break;
+		}
 	}
 
 	private _flyTick(): void
@@ -116,11 +140,12 @@ export class Player implements ITickable, ICollider
 		}
 		
 		this._speedMultiplier -= (this._speedMultiplier - 1)*0.05;
+		this._steerMultiplier -= (this._steerMultiplier - 1)*0.05;
 		
 		if (this._input.isTouching)
 		{
 			const dx = this._input.x / 500;
-			this._velocity.x += dx; // Math.sqrt(Math.abs(dx))*Math.sign(dx);
+			this._velocity.x += dx * this._steerMultiplier; // Math.sqrt(Math.abs(dx))*Math.sign(dx);
 		}
 
 		this._velocity.y += 0.05;
