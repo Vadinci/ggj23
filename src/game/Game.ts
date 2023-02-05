@@ -269,12 +269,14 @@ export class Game
 		const scoreVisual = new NumberDisplay(this._player.score);
 		this._world.addChild(scoreVisual);
 		scoreVisual.position.copyFrom(this._lastLandPosition);
-		scoreVisual.y = -32;
+		scoreVisual.y = -this._activeTree.length - 12;
+		scoreVisual.x += 2;
+
 
 		// Animate the target to the last land position
 		gsap.to(newCameraTarget, {
 			x: this._lastLandPosition.x,
-			y: this._lastLandPosition.y - 30,
+			y: this._lastLandPosition.y - this._activeTree.length,
 			duration: 2,
 			onComplete: () => 
 			{
@@ -282,6 +284,19 @@ export class Game
 				this._startLaunch();
 			}
 		});
+
+		this._input.onTouchStart.once(()=>
+		{
+			gsap.to(scoreVisual, {
+				alpha: 0,
+				duration: 0.5,
+				onComplete: ()=>
+				{
+					scoreVisual.destroy();
+				}
+			});
+		}, this);
+
 
 		this._state = GameState.PANNING;
 	}
