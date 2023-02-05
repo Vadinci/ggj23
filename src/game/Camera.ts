@@ -32,7 +32,8 @@ export class Camera implements ITickable
 
 	public tick(): void 
 	{
-		this._position.copyFrom(this._target);
+		this._position.x += (this._target.x - this._position.x)*0.5;
+		this._position.y += (this._target.y - this._position.y)*0.5;
 		
 		// focus on target
 		this._world.x = -this._position.x;

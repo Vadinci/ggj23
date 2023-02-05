@@ -33,6 +33,9 @@ export class Player implements ITickable, ICollider
 	private _position: Point = new Point();
 	private _velocity: Point = new Point();
 
+	private _score = 0;
+	private _nextScoreY = 10;
+
 	constructor(input: Input)
 	{
 		this._position.x = 48;
@@ -55,12 +58,20 @@ export class Player implements ITickable, ICollider
 		return this._state;
 	}
 
+	public get score(): number
+	{
+		return this._score;
+	}
+
 	public launch(from: Point, velocity: Point): void
 	{
 		this._position.copyFrom(from);
 		this._velocity.copyFrom(velocity);
 		this._state = PlayerState.FLYING;
 		this._speed = BASE_SPEED;
+
+		this._score = 0;
+		this._nextScoreY = 10;
 	}
 
 	public tick(): void 
@@ -86,7 +97,7 @@ export class Player implements ITickable, ICollider
 		switch(other.tag) 
 		{
 		case 'Water':
-			// 
+			this._score += 5;
 			break;
 		case 'Nutrients':
 			this._speed += 0.2;
@@ -138,6 +149,11 @@ export class Player implements ITickable, ICollider
 			this.onStopped.fire();
 			this._state = PlayerState.IDLE
 			return;
+		}
+
+		if (this._position.y > this._nextScoreY){
+			this._score++;
+			this._nextScoreY += 5;
 		}
 		
 		this._speedMultiplier -= (this._speedMultiplier - 1)*0.05;

@@ -114,6 +114,7 @@ export class Game
 
 			["sprites/S_ObjectHit_16x16@4.png","object_hit"],
 			["sprites/S_Impact_16x16@4.png","impact"],
+			["sprites/S_Launch_16x16@4.png","launch"],
 		]).complete;
 
 		parent.addChild(this._world);
@@ -159,6 +160,16 @@ export class Game
 		)
 
 		this._player.launch(launchPos, new Point(5,-5));
+
+		// spawn effect
+		const effect = new SpriteEffect("launch", 0.2, { width: 16, height: 16 });
+		this._world.addChild(effect.sprite);
+		effect.play(()=>
+		{
+			this._world.removeChild(effect.sprite);
+		});
+
+		effect.sprite.position.copyFrom(launchPos);
 		
 
 		this._tickables.push(this._seedVisual);
@@ -212,7 +223,7 @@ export class Game
 		this._tickables.splice(this._tickables.indexOf(this._rootVisual), 1);
 
 		this._world.removeChild(this._activeTree);
-		this._activeTree = new Tree(Random.int(3,12));
+		this._activeTree = new Tree(1+Math.floor(Math.pow(this._player.score,0.7)/10));
 		this._activeTree.position.copyFrom(this._lastLandPosition);
 		this._world.addChild(this._activeTree);
 
@@ -226,7 +237,7 @@ export class Game
 		// Animate the target to the last land position
 		gsap.to(newCameraTarget, {
 			x: this._lastLandPosition.x,
-			y: this._lastLandPosition.y,
+			y: this._lastLandPosition.y - 30,
 			duration: 2,
 			onComplete: () => 
 			{
