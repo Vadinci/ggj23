@@ -14,6 +14,7 @@ import { OBSTACLES, ObstacleSpawner } from "./ObstacleSpawner";
 import { Player } from "./Player";
 import { RootVisual } from "./RootVisual";
 import { SeedVisual } from "./SeedVisual";
+import { SpriteEffect } from "./SpriteEffect";
 import { TileLayer } from "./TileLayer";
 import { Tree } from "./Tree";
 
@@ -109,7 +110,10 @@ export class Game
 			["objects/T_Object_Tree_01.png","tree_01"],
 			["objects/T_Object_TreeCanopy.png","tree_canopy"],
 
-			...OBSTACLES.map(key => [`objects/T_Object_${key}.png`, `obstacle_${key}`] as ContentRequest)
+			...OBSTACLES.map(key => [`objects/T_Object_${key}.png`, `obstacle_${key}`] as ContentRequest),
+
+			["sprites/S_ObjectHit_16x16@4.png","object_hit"],
+			["sprites/S_Impact_16x16@4.png","impact"],
 		]).complete;
 
 		parent.addChild(this._world);
@@ -189,6 +193,17 @@ export class Game
 		}, this);
 
 		this._state = GameState.DIGGING;
+
+		// spawn effect
+		const effect = new SpriteEffect("impact", 0.2, { width: 16, height: 16 });
+		this._world.addChild(effect.sprite);
+		effect.play(()=>
+		{
+			this._world.removeChild(effect.sprite);
+		});
+
+		effect.sprite.position.copyFrom(this._lastLandPosition);
+		effect.sprite.y -= 8;
 	}
 
 	private _panToTree(): void 

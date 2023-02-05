@@ -90,6 +90,7 @@ export class Player implements ITickable, ICollider
 			break;
 		case 'Nutrients':
 			this._speed += 0.2;
+			this._speedMultiplier += 0.4;
 			break;
 		case 'Bone':
 			this._speedMultiplier = 0.5;

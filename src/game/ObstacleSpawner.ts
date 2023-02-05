@@ -1,9 +1,11 @@
+import { core } from "core";
 import { Random } from "core/classes/Random";
-import { Container, Point } from "pixi.js";
+import { AnimatedSprite, Container, Point } from "pixi.js";
 import { Collisions } from "./Collisions";
 import { ITickable } from "./ITickable";
 import { Obstacle } from "./Obstacle";
 import { Player } from "./Player";
+import { SpriteEffect } from "./SpriteEffect";
 
 const CHUNK_SIZE = 24;
 const RANGE = 5;
@@ -14,8 +16,8 @@ export const OBSTACLES: string[] = [
 	'Bone',
 	'Stone',
 	'Stone_Alt',
-	'Oil',
-	'Saw'
+	'Saw',
+	'Oil'
 ]
 
 export class ObstacleSpawner implements ITickable 
@@ -79,14 +81,15 @@ export class ObstacleSpawner implements ITickable
 
 	public createObstacle(col: number, row: number, hash: string)
 	{
-		if (Random.bool(0.5)) 
-		{
-			this._obstacles.set(hash, null);
-			return;
-		}
+		const tags: string[]= OBSTACLES.concat([]);
 
-		const index = Math.min(Math.floor(Math.abs(row * 0.02) * OBSTACLES.length), OBSTACLES.length - 1);
-		const tag = Random.pick(OBSTACLES.slice(index));
+		tags.push(OBSTACLES[Math.min(OBSTACLES.length - 1, Math.floor(row/10))]);
+		tags.push(OBSTACLES[Math.min(OBSTACLES.length - 1, Math.floor(row/10))]);
+		tags.push(OBSTACLES[Math.min(OBSTACLES.length - 1, Math.floor(row/6))]);
+		tags.push(OBSTACLES[Math.min(OBSTACLES.length - 1, Math.floor(row/4))]);
+	
+		const tag = Random.pick(tags);
+
 
 		const obstacle = new Obstacle(tag);
 		obstacle.x = Random.float(col, col+1)*CHUNK_SIZE;
@@ -124,5 +127,16 @@ export class ObstacleSpawner implements ITickable
 				this._obstacles.set(key, null);
 			}
 		});
+
+		// spawn effect
+		const effect = new SpriteEffect("object_hit", 0.2, { width: 16, height: 16 });
+		this._world.addChild(effect.sprite);
+		effect.play(()=>
+		{
+			this._world.removeChild(effect.sprite);
+		});
+
+		effect.sprite.x = obstacle.x + obstacle.width/2;
+		effect.sprite.y = obstacle.y + obstacle.height/2;
 	}
 }
