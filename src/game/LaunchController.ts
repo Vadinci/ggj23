@@ -1,10 +1,12 @@
 import { DisplayObject, Point } from "pixi.js";
 import { Input } from "./Input";
+import { core } from "core";
+import { ContentRequest } from "core/services/Content";
 import { ITickable } from "./ITickable";
 import { Event } from "core/classes/Event";
 import gsap from "gsap";
 
-export class LaunchController implements ITickable 
+export class LaunchController implements ITickable
 {
 	public onFire: Event<[]> = new Event();
 	private _input: Input;
@@ -18,7 +20,7 @@ export class LaunchController implements ITickable
 		this._input = input;
 	}
 
-	public tick(): void 
+	public tick(): void
 	{
 		if (!this._tree)
 		{
@@ -57,6 +59,10 @@ export class LaunchController implements ITickable
 	private _handleTouchStart(): void
 	{
 		this._touchStart = new Point().copyFrom(this._input);
+
+		const sfx = core.services.content.getSound('sfx_boot');
+		sfx.volume(1);
+		sfx.play();
 	}
 
 	private _handleTouchEnd(): void

@@ -141,6 +141,7 @@ export class Game
 			["sounds/noise/SF_Hit_Alt.wav","sfx_hit_alt"],
 			["sounds/noise/SF_SpeedUp.wav","sfx_speed_up"],
 			["sounds/noise/SF_Water.wav","sfx_water"],
+			["sounds/noise/SF_Boot.wav","sfx_boot"],
 		]).complete;
 
 		parent.addChild(this._world);
