@@ -7,7 +7,7 @@ export class Camera implements ITickable
 {
 	private _world: Container;
 	private _target: IPointData = new Point(0,0);
-	private _offset: IPointData = new Point(0,0);
+	private _offset: Point = new Point(0,0);
 
 	private _position: Point = new Point();
 	private _shake = 0;
