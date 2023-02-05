@@ -126,12 +126,21 @@ export class Game
 			...OBSTACLES.map(key => [`objects/T_Object_${key}.png`, `obstacle_${key}`] as ContentRequest),
 
 			["sprites/S_ObjectHit_16x16@4.png","object_hit"],
+			["sprites/S_NutritionHit_16x16@4.png","nutrition_hit"],
+			["sprites/S_WaterHit_16x16@4.png","water_hit"],
 			["sprites/S_Impact_16x16@4.png","impact"],
 			["sprites/S_Launch_16x16@4.png","launch"],
 
 			["ui/UI_Logo.png","logo"],
 
 			["ui/F_Numbers_5x8@10.png","numbers"],
+
+			["sounds/noise/SF_Launch.wav","sfx_launch"],
+			["sounds/noise/SF_Land.wav","sfx_land"],
+			["sounds/noise/SF_Hit.wav","sfx_hit"],
+			["sounds/noise/SF_Hit_Alt.wav","sfx_hit_alt"],
+			["sounds/noise/SF_SpeedUp.wav","sfx_speed_up"],
+			["sounds/noise/SF_Water.wav","sfx_water"],
 		]).complete;
 
 		parent.addChild(this._world);
@@ -194,6 +203,10 @@ export class Game
 
 		this._camera.setTarget(this._player);
 
+		const sfx = core.services.content.getSound('sfx_launch');
+		sfx.volume(0.05);
+		sfx.play();
+
 		const tree = this._activeTree;
 		const launchPos = new Point(
 			tree.x - Math.cos(tree.rotation+Math.PI/2)*tree.length,
@@ -251,6 +264,11 @@ export class Game
 		this._world.addChild(this._rootVisual);
 
 		this._world.removeChild(this._seedVisual);
+
+		const sfx = core.services.content.getSound('sfx_land');
+		sfx.volume(0.6);
+		sfx.play();
+
 
 		// spawn effect
 		this._sapling = new SpriteEffect("sapling", 0.2, { width: 22, height: 24 });

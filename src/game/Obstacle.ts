@@ -6,7 +6,7 @@ import { ICollider } from "./Collisions";
 export class Obstacle extends Container implements ICollider 
 {
 	public readonly tag: string;
-	public onCollect: Event<[obstacle:this]> = new Event();
+	public onCollect: Event<[obstacle:this, withPlayer:boolean]> = new Event();
 
 	constructor(tag: string)
 	{
@@ -18,7 +18,7 @@ export class Obstacle extends Container implements ICollider
 	
 	handleCollision(other: ICollider): void 
 	{
-		this.onCollect.fire(this);
+		this.onCollect.fire(this, other.tag === "player");
 	}
 
 	

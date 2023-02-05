@@ -29,7 +29,9 @@
   },
   "dependencies": {
     "@pixi/events": "^6.5.9",
+    "@types/howler": "^2.2.7",
     "gsap": "^3.11.4",
+    "howler": "^2.2.3",
     "loglevel": "^1.8.1",
     "pixi.js": "^6.5.9",
     "yaml": "^2.2.1"

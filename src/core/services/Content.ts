@@ -4,6 +4,7 @@ import { Event } from "../classes/Event";
 import { Texture } from "@pixi/core";
 import YAML from "yaml";
 import log from "loglevel";
+import * as Howler from "howler";
 
 export type ContentRequest = [nameOrUrl: string, name?: string];
 
@@ -50,6 +51,18 @@ export class ContentService implements IService
 			throw new Error(`resource ${key} is not loaded or is not a data`); // @TODO improve
 		}
 		return YAML.parse(data);
+	}
+
+	public getSound(key: string): Howler.Howl 
+	{
+		const soundUrl = this._resources["wav"]?.[key].url;
+		if (!soundUrl) 
+		{
+			throw new Error(`resource ${key} is not loaded or is not a sound`); // @TODO improve
+		}
+		return new Howler.Howl({
+			src: [soundUrl]
+		});
 	}
 
 	public load(requests: ContentRequest[]): LoaderProgress 

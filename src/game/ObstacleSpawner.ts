@@ -1,6 +1,6 @@
 import { core } from "core";
 import { Random } from "core/classes/Random";
-import { AnimatedSprite, Container, Point } from "pixi.js";
+import { Container } from "pixi.js";
 import { Collisions } from "./Collisions";
 import { ITickable } from "./ITickable";
 import { Obstacle } from "./Obstacle";
@@ -115,9 +115,13 @@ export class ObstacleSpawner implements ITickable
 		return [col, row];
 	}
 
-	private _handleObstacleCollect(obstacle: Obstacle): void
+	private _handleObstacleCollect(obstacle: Obstacle, withPlayer: boolean): void
 	{
 		this.removeObstacle(obstacle);
+		if (!withPlayer) 
+		{
+			return;
+		}
 		// find the obstacle in the map of type <string, Obstacle> and change it's entry to null
 		this._obstacles.forEach((value, key) => 
 		{
@@ -127,8 +131,27 @@ export class ObstacleSpawner implements ITickable
 			}
 		});
 
+		let effectName = "object_hit";
+		let sfxName = Random.pick(["sfx_hit","sfx_hit_alt"]);
+		
+		if (obstacle.tag === "Water")
+		{
+			effectName = "water_hit";
+			sfxName = "sfx_water";
+		}
+		if (obstacle.tag === "Nutrients")
+		{
+			effectName = "nutrition_hit";
+			sfxName = "sfx_speed_up";
+		}
+
+		const sfx = core.services.content.getSound(sfxName);
+		sfx.volume(0.4);
+		sfx.play();
+
+
 		// spawn effect
-		const effect = new SpriteEffect("object_hit", 0.2, { width: 16, height: 16 });
+		const effect = new SpriteEffect(effectName, 0.2, { width: 16, height: 16 });
 		this._world.addChild(effect.sprite);
 		effect.play(()=>
 		{
