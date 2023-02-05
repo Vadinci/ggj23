@@ -104,7 +104,7 @@ export class Game
 			{
 				return [`tiles/T_Tile_0${i}.png`,`tile_0${i}`]
 			}) as ContentRequest[],
-			
+
 			...Array.from({ length: 10 }, (v, i) =>
 			{
 				return [`tiles/T_Tile_0${i}_Alt.png`,`tile_0${i}_alt`]
@@ -141,6 +141,7 @@ export class Game
 			["sounds/noise/SF_Hit_Alt.wav","sfx_hit_alt"],
 			["sounds/noise/SF_SpeedUp.wav","sfx_speed_up"],
 			["sounds/noise/SF_Water.wav","sfx_water"],
+			["sounds/noise/SF_Boot.wav","sfx_boot"],
 		]).complete;
 
 		parent.addChild(this._world);
@@ -204,7 +205,7 @@ export class Game
 		this._camera.setTarget(this._player);
 
 		const sfx = core.services.content.getSound('sfx_launch');
-		sfx.volume(0.05);
+		sfx.volume(0.15);
 		sfx.play();
 
 		const tree = this._activeTree;
