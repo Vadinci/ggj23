@@ -189,7 +189,10 @@ export class Game
 			tree.y - Math.sin(tree.rotation+Math.PI/2)*tree.length,
 		)
 
-		this._player.launch(launchPos, new Point(5,-5));
+		const angle = Math.PI/5;
+		const speed = 3 + Math.pow(this._activeTree.length,0.6)*1.2;
+
+		this._player.launch(launchPos, new Point(Math.cos(angle)*speed,-Math.sin(angle)*speed));
 
 		// spawn effect
 		const effect = new SpriteEffect("launch", 0.2, { width: 16, height: 16 });
@@ -228,6 +231,8 @@ export class Game
 		this._rootVisual.enable();
 		this._tickables.push(this._rootVisual);
 		this._world.addChild(this._rootVisual);
+
+		this._camera.shake(5);
 
 		this._player.onStopped.once(()=>
 		{

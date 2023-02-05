@@ -133,8 +133,8 @@ export class Player implements ITickable, ICollider
 
 		this._velocity.y += 0.05;
 
-		this._velocity.x *= 0.99;
-		this._velocity.y *= 0.99;
+		this._velocity.x *= 0.996;
+		this._velocity.y *= 0.996;
 	}
 
 	private _digTick(): void
