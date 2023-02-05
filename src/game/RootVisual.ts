@@ -47,6 +47,7 @@ export class RootVisual extends Container implements ITickable
 		{
 			val.tex.destroy(true);
 		})
+		this._walkers = [];
 		this._visualChunks.clear();
 	}
 
