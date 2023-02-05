@@ -53,6 +53,11 @@ export class Player implements ITickable, ICollider
 		return this._position.y | 0;
 	}
 
+	public get speed(): number
+	{
+		return this._speed * this._speedMultiplier;
+	}
+
 	public get state(): PlayerState
 	{
 		return this._state;
@@ -151,7 +156,8 @@ export class Player implements ITickable, ICollider
 			return;
 		}
 
-		if (this._position.y > this._nextScoreY){
+		if (this._position.y > this._nextScoreY)
+		{
 			this._score++;
 			this._nextScoreY += 5;
 		}
