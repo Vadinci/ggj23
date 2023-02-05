@@ -22,7 +22,7 @@ import { Tree } from "./Tree";
 
 const logger = log.getLogger("Game");
 
-export enum GameState 
+export enum GameState
 {
 	BOOTUP,
 	LAUNCHING,
@@ -31,7 +31,7 @@ export enum GameState
 	PANNING
 }
 
-export class Game 
+export class Game
 {
 	private _inputContainer: Container;
 	private _input: Input;
@@ -74,11 +74,11 @@ export class Game
 		this._collisions = new Collisions();
 		this._collisions.addCollider(this._player);
 		this._tickables.push(this._collisions);
-		
+
 		this._tileLayer = new TileLayer(this._camera);
 		this._world.addChild(this._tileLayer);
 		this._tickables.push(this._tileLayer);
-	
+
 		this._cloudLayer = new CloudLayer(this._camera);
 		this._world.addChild(this._cloudLayer);
 		this._tickables.push(this._cloudLayer);
@@ -94,15 +94,17 @@ export class Game
 	public async start(parent: Container): Promise<void>
 	{
 		await core.services.content.load([
-			...Array.from({ length: 9 }, (v, i) => 
+			...Array.from({ length: 10 }, (v, i) =>
 			{
 				return [`tiles/T_Tile_0${i}.png`,`tile_0${i}`]
 			}) as ContentRequest[],
-			...Array.from({ length: 9 }, (v, i) => 
+			
+			...Array.from({ length: 10 }, (v, i) =>
 			{
 				return [`tiles/T_Tile_0${i}_Alt.png`,`tile_0${i}_alt`]
 			}) as ContentRequest[],
-			...Array.from({ length: 7 }, (v, i) => 
+
+			...Array.from({ length: 7 }, (v, i) =>
 			{
 				return [`misc/T_Misc_Cloud_0${i}.png`,`cloud_0${i}`]
 			}) as ContentRequest[],
@@ -208,16 +210,16 @@ export class Game
 
 		this._state = GameState.FLYING;
 
-		const checkPosition = () => 
+		const checkPosition = () =>
 		{
-			if (this._player.y < -150) 
+			if (this._player.y < -150)
 			{
 				this._rootVisual.disable();
 				return;
 			}
 			requestAnimationFrame(checkPosition);
 		};
-	
+
 		checkPosition();
 	}
 
@@ -248,7 +250,7 @@ export class Game
 		effect.sprite.y -= 8;
 	}
 
-	private _panToTree(): void 
+	private _panToTree(): void
 	{
 		// Stop updating the root visual
 		this._tickables.splice(this._tickables.indexOf(this._rootVisual), 1);
@@ -278,7 +280,7 @@ export class Game
 			x: this._lastLandPosition.x,
 			y: this._lastLandPosition.y - this._activeTree.length,
 			duration: 2,
-			onComplete: () => 
+			onComplete: () =>
 			{
 				this._world.removeChild(newCameraTarget);
 				this._startLaunch();
