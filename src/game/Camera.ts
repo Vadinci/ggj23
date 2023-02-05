@@ -7,6 +7,7 @@ export class Camera implements ITickable
 {
 	private _world: Container;
 	private _target: IPointData = new Point(0,0);
+	private _offset: IPointData = new Point(0,0);
 
 	private _position: Point = new Point();
 	private _shake = 0;
@@ -26,6 +27,11 @@ export class Camera implements ITickable
 		return this._position.y;
 	}
 
+	public setOffset(x: number, y: number): void
+	{
+		this._offset.set(x,y);
+	}
+
 	public shake(amount: number)
 	{
 		this._shake += amount;
@@ -39,8 +45,8 @@ export class Camera implements ITickable
 
 	public tick(): void 
 	{
-		this._position.x += (this._target.x - this._position.x)*0.5;
-		this._position.y += (this._target.y - this._position.y)*0.5;
+		this._position.x += ((this._target.x + this._offset.x) - this._position.x)*0.33;
+		this._position.y += ((this._target.y + this._offset.y) - this._position.y)*0.33;
 		
 		// focus on target
 		this._world.x = -this._position.x;

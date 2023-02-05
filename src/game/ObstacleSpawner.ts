@@ -8,7 +8,6 @@ import { Player } from "./Player";
 import { SpriteEffect } from "./SpriteEffect";
 
 const CHUNK_SIZE = 24;
-const RANGE = 5;
 
 export const OBSTACLES: string[] = [
 	'Water',
@@ -47,14 +46,14 @@ export class ObstacleSpawner implements ITickable
 		this._lastChunk = `${col}_${row}`;
 
 		const newObstacleMap = new Map<string, true>();
-		for (let iy = row - RANGE; iy <= row + RANGE; iy++)
+		for (let iy = row - 4; iy <= row + 8; iy++)
 		{
 			if (iy < 3) 
 			{
 				continue;
 			}
 		
-			for (let ix = col - RANGE; ix <= col + RANGE; ix++)
+			for (let ix = col - 4; ix <= col + 4; ix++)
 			{
 				const hash = `${ix}_${iy}`
 				if (!this._obstacles.has(hash))

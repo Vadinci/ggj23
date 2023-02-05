@@ -4,7 +4,9 @@ import { ITickable } from "./ITickable";
 import { Player } from "./Player";
 
 const CHUNK_SIZE = 128;
-const COLOR = "#d9ffc0";
+const ROOT_COLOR = "#d9ffc0";
+const BRANCH_COLOR = "#e5d286";
+const HEAD_COLOR = "#6aff4c";
 
 type Walker = {
 	life: number;
@@ -16,12 +18,9 @@ type Walker = {
 export class RootVisual extends Container implements ITickable
 {
 	private _player: Player;
-
-	private _head: Graphics;
-	private _lastBranchNode: Point = new Point();
-
 	private _walkers: Walker[] = [];
 	private _walkerCountdown = 100;
+	private _oldPos: Point = new Point();
 
 	private _visualChunks: Map<string, {
 		tex: Texture;
@@ -33,21 +32,17 @@ export class RootVisual extends Container implements ITickable
 	{
 		super();
 		this._player = player;
-
-		this._head = new Graphics().beginFill(0xff0000).drawCircle(0,0,1).endFill();
-		this.addChild(this._head);
 	}
 
 	public enable(): void
 	{
-		this._lastBranchNode.copyFrom(this._player);
+		this._oldPos.copyFrom(this._player);
 		this._walkerCountdown = 100;
 	}
 
 	public disable(): void 
 	{
 		this.removeChildren();
-		this.addChild(this._head);
 		this._visualChunks.forEach(val=>
 		{
 			val.tex.destroy(true);
@@ -57,13 +52,12 @@ export class RootVisual extends Container implements ITickable
 
 	public tick(): void
 	{
-		this._draw(this._head.x | 0, this._head.y | 0, 2, COLOR);
+		this._draw(this._oldPos.x | 0, this._oldPos.y | 0, 2, ROOT_COLOR);
 
-		const dx = this._player.x - this._head.x;
-		const dy = this._player.y - this._head.y;
+		const dx = this._player.x - this._oldPos.x;
+		const dy = this._player.y - this._oldPos.y;
 
-		this._head.x = this._player.x;
-		this._head.y = this._player.y;
+		this._oldPos.copyFrom(this._player);
 
 		this._walkerCountdown--;
 
@@ -72,8 +66,8 @@ export class RootVisual extends Container implements ITickable
 			const walker: Walker = {
 				life: Random.int(50,250),
 				angle: Math.atan2(dy, dx)+Random.pick([-Math.PI/2, Math.PI/2]),
-				x: this._head.x,
-				y: this._head.y,
+				x: this._player.x,
+				y: this._player.y,
 				speed: 1,
 			}
 
@@ -88,7 +82,7 @@ export class RootVisual extends Container implements ITickable
 			walker.speed *= 0.995;
 			walker.angle += Random.float(-0.2,0.2);
 			walker.life--;
-			this._draw(walker.x | 0, walker.y | 0, 1, COLOR);
+			this._draw(walker.x | 0, walker.y | 0, 1, BRANCH_COLOR);
 		});
 
 		this._walkers = this._walkers.filter(walker => walker.life > 0);
@@ -105,7 +99,7 @@ export class RootVisual extends Container implements ITickable
 			}
 		});
 		this._walkers = this._walkers.concat(newWalkers);
-		this._draw(this._head.x | 0, this._head.y | 0, 1, COLOR);
+		this._draw(this._player.x | 0, this._player.y | 0, 1, HEAD_COLOR);
 
 		this._visualChunks.forEach(chunk => 
 		{
