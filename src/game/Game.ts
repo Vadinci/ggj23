@@ -1,4 +1,5 @@
 import { core } from "core";
+import { Random } from "core/classes/Random";
 import { ContentRequest } from "core/services/Content";
 import gsap from "gsap";
 import log from "loglevel";
@@ -181,6 +182,11 @@ export class Game
 	{
 		// Stop updating the root visual
 		this._tickables.splice(this._tickables.indexOf(this._rootVisual), 1);
+
+		this._world.removeChild(this._activeTree);
+		this._activeTree = new Tree(Random.int(3,12));
+		this._activeTree.position.copyFrom(this._lastLandPosition);
+		this._world.addChild(this._activeTree);
 
 		// Create a new camera target
 		const newCameraTarget = new Container();

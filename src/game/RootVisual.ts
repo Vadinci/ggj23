@@ -40,7 +40,7 @@ export class RootVisual extends Container implements ITickable
 		{
 			this._branchTicker += 15;
 			const branch: Graphics = new Graphics()
-				.lineStyle(1,0xff0000)
+				.lineStyle(1,0x00aa00)
 				.moveTo(this._head.x, this._head.y)
 				.lineTo(this._lastBranchNode.x, this._lastBranchNode.y);
 			this._lastBranchNode.copyFrom(this._head)
