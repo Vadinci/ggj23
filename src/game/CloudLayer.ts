@@ -50,7 +50,7 @@ export class CloudLayer extends Container implements ITickable
 						cloud.visible = false;
 					}
 					cloud.scale.set(1.5);
-					cloud.alpha = Random.pick([0.5, 0.75, 1]);
+					cloud.alpha = Random.pick([0.8, 1]);
 					
 					this.addChild(cloud);
 				}
